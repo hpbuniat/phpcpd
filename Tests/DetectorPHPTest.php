@@ -51,7 +51,7 @@ if (!defined('TEST_FILES_PATH')) {
 require_once 'PHPCPD/Detector.php';
 
 /**
- * Tests for the PHPCPD code analyser.
+ * Tests for the PHPCPD-PHP code analyser.
  *
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright 2009-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
@@ -60,7 +60,7 @@ require_once 'PHPCPD/Detector.php';
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release 1.0.0
  */
-class PHPCPD_DetectorTest extends PHPUnit_Framework_TestCase
+class PHPCPD_DetectorPhpTest extends PHPUnit_Framework_TestCase
 {
     protected $detector;
 
@@ -69,7 +69,7 @@ class PHPCPD_DetectorTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->detector = new PHPCPD_Detector;
+        $this->detector = new PHPCPD_Detector();
     }
 
     /**
@@ -78,7 +78,7 @@ class PHPCPD_DetectorTest extends PHPUnit_Framework_TestCase
      */
     public function testDetectingSimpleClonesWorks()
     {
-        $clones = $this->detector->copyPasteDetection(
+        $clones = $this->detector->run(
           array(TEST_FILES_PATH . 'Math.php')
         );
 

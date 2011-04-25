@@ -9,17 +9,17 @@
  * modification, are permitted provided that the following conditions
  * are met:
  *
- *   * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
  *
- *   * Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in
- *     the documentation and/or other materials provided with the
- *     distribution.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in
+ * the documentation and/or other materials provided with the
+ * distribution.
  *
- *   * Neither the name of Sebastian Bergmann nor the names of his
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
+ * * Neither the name of Sebastian Bergmann nor the names of his
+ * contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -43,13 +43,13 @@
 
 require_once 'File/Iterator/Factory.php';
 require_once 'PHPCPD/Detector.php';
+require_once 'PHPCPD/Detector/PHP.php';
 require_once 'PHPCPD/TextUI/ResultPrinter.php';
 require_once 'PHPCPD/Log/XML/PMD.php';
 
 require_once 'ezc/Base/base.php';
 
-function __autoload($className)
-{
+function __autoload($className) {
     ezcBase::autoload($className);
 }
 
@@ -63,110 +63,30 @@ function __autoload($className)
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release 1.0.0
  */
-class PHPCPD_TextUI_Command
-{
+class PHPCPD_TextUI_Command {
+
     /**
      * Main method.
      */
-    public static function main()
-    {
-        $input  = new ezcConsoleInput;
-        $output = new ezcConsoleOutput;
+    public static function main() {
+        $input = new ezcConsoleInput();
+        $output = new ezcConsoleOutput();
 
-        $input->registerOption(
-          new ezcConsoleOption(
-            '',
-            'exclude',
-            ezcConsoleInput::TYPE_STRING,
-            array(),
-            TRUE
-           )
-        );
-
-        $input->registerOption(
-          new ezcConsoleOption(
-            'h',
-            'help',
-            ezcConsoleInput::TYPE_NONE,
-            NULL,
-            FALSE,
-            '',
-            '',
-            array(),
-            array(),
-            FALSE,
-            FALSE,
-            TRUE
-           )
-        );
-
-        $input->registerOption(
-          new ezcConsoleOption(
-            '',
-            'log-pmd',
-            ezcConsoleInput::TYPE_STRING
-           )
-        );
-
-        $input->registerOption(
-          new ezcConsoleOption(
-            '',
-            'min-lines',
-            ezcConsoleInput::TYPE_INT,
-            5
-           )
-        );
-
-        $input->registerOption(
-          new ezcConsoleOption(
-            '',
-            'min-tokens',
-            ezcConsoleInput::TYPE_INT,
-            70
-           )
-        );
-
-        $input->registerOption(
-          new ezcConsoleOption(
-            '',
-            'suffixes',
-            ezcConsoleInput::TYPE_STRING,
-            'php',
-            FALSE
-           )
-        );
-
-        $input->registerOption(
-          new ezcConsoleOption(
-            'v',
-            'version',
-            ezcConsoleInput::TYPE_NONE,
-            NULL,
-            FALSE,
-            '',
-            '',
-            array(),
-            array(),
-            FALSE,
-            FALSE,
-            TRUE
-           )
-        );
-
-        $input->registerOption(
-          new ezcConsoleOption(
-            '',
-            'verbose',
-            ezcConsoleInput::TYPE_NONE
-           )
-        );
+        $input->registerOption(new ezcConsoleOption('', 'exclude', ezcConsoleInput::TYPE_STRING, array(), TRUE));
+        $input->registerOption(new ezcConsoleOption('h', 'help', ezcConsoleInput::TYPE_NONE, NULL, FALSE, '', '', array(), array(), FALSE, FALSE, TRUE));
+        $input->registerOption(new ezcConsoleOption('', 'log-pmd', ezcConsoleInput::TYPE_STRING));
+        $input->registerOption(new ezcConsoleOption('', 'min-lines', ezcConsoleInput::TYPE_INT, 5));
+        $input->registerOption(new ezcConsoleOption('', 'min-tokens', ezcConsoleInput::TYPE_INT, 70));
+        $input->registerOption(new ezcConsoleOption('', 'suffixes', ezcConsoleInput::TYPE_STRING, 'php', FALSE));
+        $input->registerOption(new ezcConsoleOption('v', 'version', ezcConsoleInput::TYPE_NONE, NULL, FALSE, '', '', array(), array(), FALSE, FALSE, TRUE));
+        $input->registerOption(new ezcConsoleOption('', 'verbose', ezcConsoleInput::TYPE_NONE));
 
         try {
             $input->process();
         }
 
         catch (ezcConsoleOptionException $e) {
-            print $e->getMessage() . "\n";
+            print $e->getMessage() . PHP_EOL;
             exit(1);
         }
 
@@ -180,42 +100,45 @@ class PHPCPD_TextUI_Command
             exit(0);
         }
 
-        $arguments  = $input->getArguments();
-        $exclude    = $input->getOption('exclude')->value;
-        $logPmd     = $input->getOption('log-pmd')->value;
-        $minLines   = $input->getOption('min-lines')->value;
-        $minTokens  = $input->getOption('min-tokens')->value;
+        $arguments = $input->getArguments();
+        $exclude = $input->getOption('exclude')->value;
+        $logPmd = $input->getOption('log-pmd')->value;
+        $minLines = $input->getOption('min-lines')->value;
+        $minTokens = $input->getOption('min-tokens')->value;
 
         $suffixes = explode(',', $input->getOption('suffixes')->value);
         array_map('trim', $suffixes);
 
         if ($input->getOption('verbose')->value !== FALSE) {
             $verbose = $output;
-        } else {
+        }
+        else {
             $verbose = NULL;
         }
 
-        if (!empty($arguments)) {
-            $files = File_Iterator_Factory::getFilesAsArray(
-              $arguments, $suffixes, array(), $exclude
-            );
-        } else {
+        if (! empty($arguments)) {
+            $files = File_Iterator_Factory::getFilesAsArray($arguments, $suffixes, array(), $exclude);
+        }
+        else {
             self::showHelp();
             exit(1);
         }
 
         if (empty($files)) {
-            self::showError("No files found to scan.\n");
+            self::showError('No files found to scan.' . PHP_EOL);
         }
 
         self::printVersionString();
 
-        $detector = new PHPCPD_Detector($verbose);
-        $clones   = $detector->copyPasteDetection(
-          $files, $minLines, $minTokens
-        );
+        $oDetector = new PHPCPD_Detector($verbose);
+        if (is_null($oDetector) === true) {
+            self::showError('Detector not found' . PHP_EOL);
+            exit;
+        }
 
-        $printer = new PHPCPD_TextUI_ResultPrinter;
+        $clones = $oDetector->run($files, $minLines, $minTokens);
+
+        $printer = new PHPCPD_TextUI_ResultPrinter();
         $printer->printResult($clones, self::getCommonPath($files));
         unset($printer);
 
@@ -236,8 +159,7 @@ class PHPCPD_TextUI_Command
      * @param  array $files
      * @return string
      */
-    protected static function getCommonPath(array $files)
-    {
+    protected static function getCommonPath(array $files) {
         $count = count($files);
 
         if ($count == 1) {
@@ -255,19 +177,19 @@ class PHPCPD_TextUI_Command
         }
 
         $common = '';
-        $done   = FALSE;
-        $j      = 0;
+        $done = FALSE;
+        $j = 0;
         $count--;
 
-        while (!$done) {
+        while (! $done) {
             for ($i = 0; $i < $count; $i++) {
-                if ($_files[$i][$j] != $_files[$i+1][$j]) {
+                if ($_files[$i][$j] != $_files[$i + 1][$j]) {
                     $done = TRUE;
                     break;
                 }
             }
 
-            if (!$done) {
+            if (! $done) {
                 $common .= $_files[0][$j];
 
                 if ($j > 0) {
@@ -286,8 +208,7 @@ class PHPCPD_TextUI_Command
      *
      * @param string $message
      */
-    protected static function showError($message)
-    {
+    protected static function showError($message) {
         self::printVersionString();
 
         print $message;
@@ -298,8 +219,7 @@ class PHPCPD_TextUI_Command
     /**
      * Shows the help.
      */
-    protected static function showHelp()
-    {
+    protected static function showHelp() {
         self::printVersionString();
 
         print <<<EOT
@@ -324,8 +244,7 @@ EOT;
     /**
      * Prints the version string.
      */
-    protected static function printVersionString()
-    {
+    protected static function printVersionString() {
         print "phpcpd @package_version@ by Sebastian Bergmann.\n\n";
     }
 }
