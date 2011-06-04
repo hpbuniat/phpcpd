@@ -54,141 +54,67 @@
  */
 class PHPCPD_Detector_Strategy_Default extends PHPCPD_Detector_Strategy
 {
-    /**
-     * @var integer[] List of tokens to ignore
-     */
-    protected $tokensIgnoreList = array(
-      T_INLINE_HTML => TRUE,
-      T_COMMENT => TRUE,
-      T_DOC_COMMENT => TRUE,
-      T_OPEN_TAG => TRUE,
-      T_OPEN_TAG_WITH_ECHO => TRUE,
-      T_CLOSE_TAG => TRUE,
-      T_WHITESPACE => TRUE
-    );
 
     /**
-     * Copy & Paste Detection (CPD).
+     * Detect duplicated code
      *
-     * @param  string          $file
-     * @param  integer         $minLines
-     * @param  integer         $minTokens
-     * @param  PHPCPD_CloneMap $result
-     * @author Johann-Peter Hartmann <johann-peter.hartmann@mayflower.de>
+     * @param  string $file
+     * @param  array $currentTokenPositions
+     * @param  string $currentSignature
+     *
+     * @return PHPCPD_Detector_Abstract
      */
-    public function processFile($file, $minLines, $minTokens, PHPCPD_CloneMap $result)
-    {
-        $buffer                = file_get_contents($file);
-        $hashes                = array();
-        $currentTokenPositions = array();
-        $currentSignature      = '';
-        $tokens                = token_get_all($buffer);
-        $tokenNr               = 0;
-        $line                  = 1;
-
-        $result->setNumLines(
-          $result->getNumLines() + substr_count($buffer, "\n")
-        );
-
-        unset($buffer);
-
-        foreach (array_keys($tokens) as $key) {
-            $token = $tokens[$key];
-
-            if (is_string($token)) {
-                $line += substr_count($token, "\n");
-            } else {
-                if (!isset($this->tokensIgnoreList[$token[0]])) {
-                    $currentTokenPositions[$tokenNr++] = $line;
-
-                    $currentSignature .= chr(
-                      $token[0] & 255) . pack('N*', crc32($token[1])
-                    );
-                }
-
-                $line += substr_count($token[1], "\n");
-            }
-        }
-
-        $count     = count($currentTokenPositions);
-        $firstLine = 0;
-        $found     = FALSE;
-        $tokenNr   = 0;
+    public function processFile($file, $currentTokenPositions, $currentSignature) {
+        $count = count($currentTokenPositions);
+        $tokenNr = $firstLine = 0;
+        $found = FALSE;
 
         if ($count > 0) {
             do {
                 $line = $currentTokenPositions[$tokenNr];
-
-                $hash = substr(
-                  md5(
-                    substr(
-                      $currentSignature, $tokenNr * 5,
-                      $minTokens * 5
-                    ),
-                    TRUE
-                  ),
-                  0,
-                  8
-                );
-
-                if (isset($hashes[$hash])) {
+                $hash = md5(substr($currentSignature, $tokenNr * 5, $this->_iMinTokens * 5));
+                if (isset($this->_aHashes[$hash])) {
                     $found = TRUE;
 
                     if ($firstLine === 0) {
-                        $firstLine  = $line;
-                        $firstHash  = $hash;
+                        $firstLine = $line;
+                        $firstHash = $hash;
                         $firstToken = $tokenNr;
                     }
-                } else {
+                }
+                else {
                     if ($found) {
-                        $fileA      = $hashes[$firstHash][0];
-                        $firstLineA = $hashes[$firstHash][1];
+                        $fileA = $this->_aHashes[$firstHash][0];
+                        $firstLineA = $this->_aHashes[$firstHash][1];
 
-                        if ($line + 1 - $firstLine > $minLines &&
-                            ($fileA != $file ||
-                             $firstLineA != $firstLine)) {
-                            $result->addClone(
-                              new PHPCPD_Clone(
-                                $fileA,
-                                $firstLineA,
-                                $file,
-                                $firstLine,
-                                $line + 1 - $firstLine,
-                                $tokenNr + 1 - $firstToken
-                              )
-                            );
+                        if ($line + 1 - $firstLine > $this->_iMinLines && ($fileA != $file || $firstLineA != $firstLine)) {
+                            $this->_oMap->addClone(new PHPCPD_Clone($fileA, $firstLineA, $file, $firstLine, $line + 1 - $firstLine, $tokenNr + 1 - $firstToken));
                         }
 
-                        $found     = FALSE;
+                        $found = FALSE;
                         $firstLine = 0;
                     }
 
-                    $hashes[$hash] = array($file, $line);
+                    $this->_aHashes[$hash] = array(
+                        $file,
+                        $line
+                    );
                 }
 
                 $tokenNr++;
-            } while ($tokenNr <= $count - $minTokens + 1);
+            }
+            while ($tokenNr <= $count - $this->_iMinTokens + 1);
         }
 
         if ($found) {
-            $fileA      = $hashes[$firstHash][0];
-            $firstLineA = $hashes[$firstHash][1];
+            $fileA = $this->_aHashes[$firstHash][0];
+            $firstLineA = $this->_aHashes[$firstHash][1];
 
-            if ($line + 1 - $firstLine > $minLines &&
-                ($fileA != $file || $firstLineA != $firstLine)) {
-                $result->addClone(
-                  new PHPCPD_Clone(
-                    $fileA,
-                    $firstLineA,
-                    $file,
-                    $firstLine,
-                    $line + 1 - $firstLine,
-                    $tokenNr + 1 - $firstToken
-                  )
-                );
+            if ($line + 1 - $firstLine > $this->_iMinLines && ($fileA != $file || $firstLineA != $firstLine)) {
+                $this->_oMap->addClone(new PHPCPD_Clone($fileA, $firstLineA, $file, $firstLine, $line + 1 - $firstLine, $tokenNr + 1 - $firstToken));
             }
-
-            $found = FALSE;
         }
+
+        return $this;
     }
 }

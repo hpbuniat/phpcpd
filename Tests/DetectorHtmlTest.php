@@ -38,7 +38,6 @@
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright 2009-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @since     File available since Release 1.0.0
  */
 
 if (!defined('TEST_FILES_PATH')) {
@@ -49,8 +48,9 @@ if (!defined('TEST_FILES_PATH')) {
 }
 
 /**
- * Tests for the PHPCPD code analyser.
+ * Tests for the PHPCPD-Html code analyser.
  *
+ * @author    Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright 2009-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
@@ -58,64 +58,8 @@ if (!defined('TEST_FILES_PATH')) {
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release 1.0.0
  */
-class PHPCPD_DetectorTest extends PHPUnit_Framework_TestCase
+class PHPCPD_DetectorHtmlTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers       PHPCPD_Detector::copyPasteDetection
-     * @covers       PHPCPD_Clone::getLines
-     * @dataProvider strategyProvider
-     */
-    public function testDetectingSimpleClonesWorks($strategy)
-    {
-        $detector = new PHPCPD_Detector(new $strategy);
-
-        $clones = $detector->copyPasteDetection(
-          array(TEST_FILES_PATH . 'Math.php')
-        );
-
-        $clones = $clones->getClones();
-
-        $this->assertEquals(TEST_FILES_PATH . 'Math.php', $clones[0]->aFile);
-        $this->assertEquals(86, $clones[0]->aStartLine);
-        $this->assertEquals(TEST_FILES_PATH . 'Math.php', $clones[0]->bFile);
-        $this->assertEquals(150, $clones[0]->bStartLine);
-        $this->assertEquals(28, $clones[0]->size);
-        $this->assertEquals(68, $clones[0]->tokens);
-
-        $this->assertEquals(
-          '    public function div($v1, $v2)
-    {
-        $v3 = $v1 / ($v2 + $v1);
-        if ($v3 > 14)
-        {
-            $v4 = 0;
-            for ($i = 0; $i < $v3; $i++)
-            {
-                $v4 += ($v2 * $i);
-            }
-        }
-        $v5 = ($v4 < $v3 ? ($v3 - $v4) : ($v4 - $v3));
-
-        $v6 = ($v1 * $v2 * $v3 * $v4 * $v5);
-
-        $d = array($v1, $v2, $v3, $v4, $v5, $v6);
-
-        $v7 = 1;
-        for ($i = 0; $i < $v6; $i++)
-        {
-            shuffle( $d );
-            $v7 = $v7 + $i * end($d);
-        }
-
-        $v8 = $v7;
-        foreach ( $d as $x )
-        {
-            $v8 *= $x;
-',
-          $clones[0]->getLines()
-        );
-    }
-
     /**
      * Provider for testDetectingSimpleClonesWorks
      */
@@ -124,5 +68,53 @@ class PHPCPD_DetectorTest extends PHPUnit_Framework_TestCase
         return array(
           array('PHPCPD_Detector_Strategy_Default')
         );
+    }
+
+    /**
+     * @covers       PHPCPD_Detector::copyPasteDetection
+     * @covers       PHPCPD_Clone::getLines
+     * @dataProvider strategyProvider
+     */
+    public function testDetectingSimpleClonesWorks($strategy)
+    {
+        $detector = new PHPCPD_Detector(new $strategy);
+        $clones = $detector->copyPasteDetection(
+          array(
+              TEST_FILES_PATH . 'testA.tpl',
+              TEST_FILES_PATH . 'testB.tpl'
+          )
+        );
+
+        $clones = $clones->getClones();
+
+        $this->assertEquals(6, count($clones));
+
+        $this->assertEquals(TEST_FILES_PATH . 'testA.tpl', $clones[0]->aFile);
+        $this->assertEquals(71, $clones[0]->aStartLine);
+        $this->assertEquals(TEST_FILES_PATH . 'testB.tpl', $clones[0]->bFile);
+        $this->assertEquals(71, $clones[0]->bStartLine);
+        $this->assertEquals(39, $clones[0]->size);
+        $this->assertEquals(30, $clones[0]->tokens);
+
+        $this->assertEquals(TEST_FILES_PATH . 'testB.tpl', $clones[4]->aFile);
+        $this->assertEquals(1697, $clones[4]->aStartLine);
+        $this->assertEquals(TEST_FILES_PATH . 'testB.tpl', $clones[4]->bFile);
+        $this->assertEquals(1750, $clones[4]->bStartLine);
+        $this->assertEquals(12, $clones[4]->size);
+        $this->assertEquals(15, $clones[4]->tokens);
+
+        $this->assertEquals('&nbsp;&nbsp;&nbsp; public function </span><span class="default">equals</span><span class="keyword">( </span><span class="default">Table </span><span class="keyword">&amp;</span><span class="default">$o </span><span class="keyword">)<br />
+
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; return </span><span class="default">TRUE</span><span class="keyword">;<br />
+&nbsp;&nbsp;&nbsp; }<br />
+}<br />
+<br />
+</span><span class="default">$chair </span><span class="keyword">= new </span><span class="default">Chair</span><span class="keyword">();<br />
+
+</span><span class="default">$table </span><span class="keyword">= new </span><span class="default">Table</span><span class="keyword">();<br />
+<br />
+echo </span><span class="default">$chair</span><span class="keyword">-&gt;</span><span class="default">equals</span><span class="keyword">( </span><span class="default">$table </span><span class="keyword">);<br />
+', $clones[4]->getLines());
     }
 }

@@ -154,7 +154,7 @@ class PHPCPD_TextUI_Command
         }
 
         catch (ezcConsoleOptionException $e) {
-            print $e->getMessage() . "\n";
+            print $e->getMessage() . PHP_EOL;
             exit(1);
         }
 
@@ -199,7 +199,7 @@ class PHPCPD_TextUI_Command
         }
 
         if (empty($files)) {
-            self::showError("No files found to scan.\n");
+            self::showError('No files found to scan.' . PHP_EOL);
         }
 
         self::printVersionString();
@@ -272,6 +272,6 @@ EOT;
      */
     protected static function printVersionString()
     {
-        print "phpcpd @package_version@ by Sebastian Bergmann.\n\n";
+        print 'phpcpd @package_version@ by Sebastian Bergmann.' . PHP_EOL . PHP_EOL;
     }
 }

@@ -87,25 +87,25 @@ class PHPCPD_Detector
      */
     public function copyPasteDetection($files, $minLines = 5, $minTokens = 70)
     {
-        $result = new PHPCPD_CloneMap;
-
+        $oMap = new PHPCPD_CloneMap;
         if ($this->output !== NULL) {
             $bar = new ezcConsoleProgressbar($this->output, count($files));
-            print "Processing files\n";
+            print 'Processing files' . PHP_EOL;
         }
 
+        $this->strategy->init($oMap, $minLines, $minTokens);
+        $oTokenizer = new PHPCPD_Detector_Tokenizer();
         foreach ($files as $file) {
-            $this->strategy->processFile($file, $minLines, $minTokens, $result);
-
+            $oTokenizer->process($this->strategy, $oMap, $file);
             if ($this->output !== NULL) {
                 $bar->advance();
             }
         }
 
         if ($this->output !== NULL) {
-            print "\n\n";
+            print PHP_EOL . PHP_EOL;
         }
 
-        return $result;
+        return $oMap;
     }
 }

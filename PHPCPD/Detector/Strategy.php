@@ -54,17 +54,58 @@
 abstract class PHPCPD_Detector_Strategy
 {
     /**
-     * @var integer[] List of tokens to ignore
+     * @var array
      */
-    protected $tokensIgnoreList = array(
-      T_INLINE_HTML => TRUE,
-      T_COMMENT => TRUE,
-      T_DOC_COMMENT => TRUE,
-      T_OPEN_TAG => TRUE,
-      T_OPEN_TAG_WITH_ECHO => TRUE,
-      T_CLOSE_TAG => TRUE,
-      T_WHITESPACE => TRUE
-    );
+    protected $_aHashes = array();
+
+    /**
+     * @var PHPCPD_CloneMap
+     */
+    protected $_oMap = null;
+
+    /**
+     * @var int
+     */
+    protected $_iMinLines = null;
+
+    /**
+     * @var int
+     */
+    protected $_iMinTokens = null;
+
+    /**
+     *
+     */
+    protected $_iMinTokensInit = null;
+
+    /**
+     * Common init
+     *
+     * @param PHPCPD_CloneMap $oMap
+     *
+     * @return PHPCPD_Detector_Strategy
+     */
+    public function init(PHPCPD_CloneMap $oMap, $minLines, $minTokens) {
+        $this->_aHashes = array();
+        $this->_oMap = $oMap;
+        $this->_iMinLines = $minLines;
+        $this->_iMinTokens = (int) $minTokens;
+        $this->_iMinTokensInit = $this->_iMinTokens;
+
+        return $this;
+    }
+
+    /**
+     * Set the tokenFactor
+     *
+     * @param  float $fFactor
+     *
+     * @return PHPCPD_Detector_Strategy
+     */
+    public function tokenFactor($fFactor = 1.00) {
+        $this->_iMinTokens = (int) ($this->_iMinTokensInit * $fFactor);
+        return $this;
+    }
 
     /**
      * Copy & Paste Detection (CPD).
@@ -74,5 +115,5 @@ abstract class PHPCPD_Detector_Strategy
      * @param integer         $minTokens
      * @param PHPCPD_CloneMap $result
      */
-    abstract public function processFile($file, $minLines, $minTokens, PHPCPD_CloneMap $result);
+    abstract public function processFile($file, $minLines, $minTokens);
 }
