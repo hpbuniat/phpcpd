@@ -69,6 +69,7 @@ class PHPCPD_Detector_Tokenizer {
     protected $_aMap = array(
         'tpl' => 'Html',
         'phtml' => 'Html',
+        'css' => 'CSS',
     );
 
     /**

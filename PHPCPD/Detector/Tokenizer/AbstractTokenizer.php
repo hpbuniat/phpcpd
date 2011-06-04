@@ -59,7 +59,7 @@ abstract class PHPCPD_Detector_Tokenizer_AbstractTokenizer {
      *
      * @var float
      */
-    protected $_iTokenFactor = 1.0;
+    protected $_fTokenFactor = 1.0;
 
     /**
      * Number of Lines

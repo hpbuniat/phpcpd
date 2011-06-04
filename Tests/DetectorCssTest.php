@@ -58,7 +58,7 @@ if (!defined('TEST_FILES_PATH')) {
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release 1.0.0
  */
-class PHPCPD_DetectorHtmlTest extends PHPUnit_Framework_TestCase
+class PHPCPD_DetectorCssTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Provider for testDetectingSimpleClonesWorks
@@ -80,41 +80,34 @@ class PHPCPD_DetectorHtmlTest extends PHPUnit_Framework_TestCase
         $detector = new PHPCPD_Detector(new $strategy);
         $clones = $detector->copyPasteDetection(
           array(
-              TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testA.tpl',
-              TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testB.tpl'
+              TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css',
+              TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testB.css'
           )
         );
 
         $clones = $clones->getClones();
+        $this->assertEquals(2, count($clones));
 
-        $this->assertEquals(6, count($clones));
+        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[0]->aFile);
+        $this->assertEquals(63, $clones[0]->aStartLine);
+        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[0]->bFile);
+        $this->assertEquals(70, $clones[0]->bStartLine);
+        $this->assertEquals(6, $clones[0]->size);
+        $this->assertEquals(26, $clones[0]->tokens);
 
-        $this->assertEquals(TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testA.tpl', $clones[0]->aFile);
-        $this->assertEquals(71, $clones[0]->aStartLine);
-        $this->assertEquals(TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testB.tpl', $clones[0]->bFile);
-        $this->assertEquals(71, $clones[0]->bStartLine);
-        $this->assertEquals(39, $clones[0]->size);
-        $this->assertEquals(30, $clones[0]->tokens);
+        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[1]->aFile);
+        $this->assertEquals(95, $clones[1]->aStartLine);
+        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testB.css', $clones[1]->bFile);
+        $this->assertEquals(9, $clones[1]->bStartLine);
+        $this->assertEquals(13, $clones[1]->size);
+        $this->assertEquals(53, $clones[1]->tokens);
 
-        $this->assertEquals(TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testB.tpl', $clones[4]->aFile);
-        $this->assertEquals(1697, $clones[4]->aStartLine);
-        $this->assertEquals(TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testB.tpl', $clones[4]->bFile);
-        $this->assertEquals(1750, $clones[4]->bStartLine);
-        $this->assertEquals(12, $clones[4]->size);
-        $this->assertEquals(15, $clones[4]->tokens);
-
-        $this->assertEquals('&nbsp;&nbsp;&nbsp; public function </span><span class="default">equals</span><span class="keyword">( </span><span class="default">Table </span><span class="keyword">&amp;</span><span class="default">$o </span><span class="keyword">)<br />
-
-&nbsp;&nbsp;&nbsp; {<br />
-&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; return </span><span class="default">TRUE</span><span class="keyword">;<br />
-&nbsp;&nbsp;&nbsp; }<br />
-}<br />
-<br />
-</span><span class="default">$chair </span><span class="keyword">= new </span><span class="default">Chair</span><span class="keyword">();<br />
-
-</span><span class="default">$table </span><span class="keyword">= new </span><span class="default">Table</span><span class="keyword">();<br />
-<br />
-echo </span><span class="default">$chair</span><span class="keyword">-&gt;</span><span class="default">equals</span><span class="keyword">( </span><span class="default">$table </span><span class="keyword">);<br />
-', $clones[4]->getLines());
+        $this->assertEquals('#navi_top .zweite_zeile {
+float: left;
+margin:0;
+padding:.3em .2em;
+white-space:nowrap;
+border-bottom: 1px solid #EBE9EA;
+', $clones[0]->getLines());
     }
 }

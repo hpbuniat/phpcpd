@@ -38,21 +38,28 @@
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright 2009-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @since     File available since Release 1.0.0
+ * @since     File available since Release ...
  */
 
 /**
- * PHPCPD code analyser for PHP.
+ * PHPCPD code analyser for Html
  *
- * @author    Johann-Peter Hartmann <johann-peter.hartmann@mayflower.de>
+ * @author    Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright 2009-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version   Release: @package_version@
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
- * @since     Class available since Release 1.0.0
+ * @since     Class available since Release ...
  */
-class PHPCPD_Detector_Tokenizer_PHP extends PHPCPD_Detector_Tokenizer_AbstractTokenizer {
+class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTokenizer {
+
+    /**
+     * The Token-Factor
+     *
+     * @var float
+     */
+    protected $_fTokenFactor = 0.1;
 
     /**
      * @var integer[] List of tokens to ignore
@@ -67,35 +74,39 @@ class PHPCPD_Detector_Tokenizer_PHP extends PHPCPD_Detector_Tokenizer_AbstractTo
         T_WHITESPACE => TRUE
     );
 
-        /**
+    /**
+     *
+     */
+    public function __construct() {
+        class_exists('PHP_CodeSniffer_Tokens');
+    }
+
+    /**
      * (non-PHPdoc)
      * @see PHPCPD_Detector_Tokenizer_AbstractTokenizer::cpd()
      */
     public function cpd(PHPCPD_Detector_Strategy $strategy, $file) {
         $buffer = file_get_contents($file);
         $this->_iLines = substr_count($buffer, PHP_EOL);
+        $this->_aTokens = array();
 
         $currentTokenPositions = array();
         $currentSignature = '';
-        $tokens = token_get_all($buffer);
+
+        $oTokenizer = new PHP_CodeSniffer_Tokenizers_CSS();
+        $this->_aTokens = $oTokenizer->tokenizeString($buffer);
+
         $tokenNr = 0;
         $line = 1;
 
         unset($buffer);
-
-        foreach ($tokens as $token) {
-            if (is_string($token)) {
-                $line += substr_count($token, "\n");
+        foreach ($this->_aTokens as $token) {
+            if (! isset($this->tokensIgnoreList[$token['code']])) {
+                $currentTokenPositions[$tokenNr++] = $line;
+                $currentSignature .= chr($token['type'] & 255) . pack('N*', crc32($token['content']));
             }
-            else {
-                if (! isset($this->tokensIgnoreList[$token[0]])) {
-                    $currentTokenPositions[$tokenNr++] = $line;
-
-                    $currentSignature .= chr($token[0] & 255) . pack('N*', crc32($token[1]));
-                }
-
-                $line += substr_count($token[1], "\n");
-            }
+            
+            $line += substr_count($token['content'], PHP_EOL);
         }
 
         $strategy->tokenFactor($this->_fTokenFactor)->processFile($file, $currentTokenPositions, $currentSignature);

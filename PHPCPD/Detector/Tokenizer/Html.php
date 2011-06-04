@@ -42,7 +42,7 @@
  */
 
 /**
- * PHPCPD code analyser for Html
+ * PHPCPD code analyser for CSS
  *
  * @author    Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
@@ -55,19 +55,12 @@
 class PHPCPD_Detector_Tokenizer_Html extends PHPCPD_Detector_Tokenizer_AbstractTokenizer {
 
     /**
-     * The Tokens
-     *
-     * @var array
-     */
-    protected $_aTokens = array();
-
-    /**
      * The Token-Factor
      *
      * @var float
      */
-    protected $_iTokenFactor = 0.1;
-
+    protected $_fTokenFactor = 0.1;
+    
     /**
      * @var integer[] List of tokens to ignore
      */
@@ -101,10 +94,8 @@ class PHPCPD_Detector_Tokenizer_Html extends PHPCPD_Detector_Tokenizer_AbstractT
         $oNode = $oTidy->root();
         $this->_tokenHelper($oNode);
 
-        unset($oTidy, $oNode);
+        unset($oTidy, $oNode, $buffer);
         $tokenNr = 0;
-
-        unset($buffer);
 
         foreach ($this->_aTokens as $token) {
             if (! isset($this->tokensIgnoreList[$token[0]])) {
@@ -113,7 +104,7 @@ class PHPCPD_Detector_Tokenizer_Html extends PHPCPD_Detector_Tokenizer_AbstractT
             }
         }
 
-        $strategy->tokenFactor($this->_iTokenFactor)->processFile($file, $currentTokenPositions, $currentSignature);
+        $strategy->tokenFactor($this->_fTokenFactor)->processFile($file, $currentTokenPositions, $currentSignature);
         return $this;
     }
 
