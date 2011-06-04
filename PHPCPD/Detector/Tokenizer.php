@@ -54,7 +54,6 @@
  */
 class PHPCPD_Detector_Tokenizer {
 
-
     /**
      * Detector instances
      *
@@ -76,11 +75,12 @@ class PHPCPD_Detector_Tokenizer {
      * Run the detection
      *
      * @param  PHPCPD_Detector_Strategy $strategy
+     * @param  PHPCPD_CloneMap $oMap
      * @param  string $file
      *
      * @return PHPCPD_Detector_Tokenizer
      */
-    public function process(PHPCPD_Detector_Strategy $strategy, $oMap, $file) {
+    public function process(PHPCPD_Detector_Strategy $strategy, PHPCPD_CloneMap $oMap, $file) {
         $oDetector = $this->_suffixMapper($file);
         $oDetector->cpd($strategy, $file);
         $oMap->setNumLines($oMap->getNumLines() + $oDetector->getLines());
