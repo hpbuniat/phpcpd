@@ -67,9 +67,9 @@ class PHPCPD_Detector_Tokenizer_PHP extends PHPCPD_Detector_Tokenizer_AbstractTo
         T_WHITESPACE => TRUE
     );
 
-    /**
+        /**
      * (non-PHPdoc)
-     * @see PHPCPD_Detector::cpd()
+     * @see PHPCPD_Detector_Tokenizer_AbstractTokenizer::cpd()
      */
     public function cpd(PHPCPD_Detector_Strategy $strategy, $file) {
         $buffer = file_get_contents($file);

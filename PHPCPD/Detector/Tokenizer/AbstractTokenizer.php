@@ -76,4 +76,14 @@ abstract class PHPCPD_Detector_Tokenizer_AbstractTokenizer {
     public function getLines() {
         return $this->_iLines;
     }
+
+    /**
+     * Copy & Paste Detection (CPD).
+     *
+     * @param  PHPCPD_Detector_Strategy $strategy Strategy to apply
+     * @param  string $file File to process
+     *
+     * @return PHPCPD_Detector_Abstract
+     */
+    abstract public function cpd(PHPCPD_Detector_Strategy $strategy, $file);
 }

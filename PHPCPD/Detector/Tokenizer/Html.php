@@ -77,7 +77,7 @@ class PHPCPD_Detector_Tokenizer_Html extends PHPCPD_Detector_Tokenizer_AbstractT
 
     /**
      * (non-PHPdoc)
-     * @see PHPCPD_Detector::cpd()
+     * @see PHPCPD_Detector_Tokenizer_AbstractTokenizer::cpd()
      */
     public function cpd(PHPCPD_Detector_Strategy $strategy, $file) {
         $buffer = file_get_contents($file);

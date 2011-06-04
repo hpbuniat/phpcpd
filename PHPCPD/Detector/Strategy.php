@@ -54,34 +54,46 @@
 abstract class PHPCPD_Detector_Strategy
 {
     /**
+     * Token-Hashes
+     *
      * @var array
      */
     protected $_aHashes = array();
 
     /**
+     * Detected clones
+     *
      * @var PHPCPD_CloneMap
      */
     protected $_oMap = null;
 
     /**
+     * Minimum Line-Numbers to detect Clone
+     *
      * @var int
      */
     protected $_iMinLines = null;
 
     /**
+     * Minimum Tokens to detect Clone
+     *
      * @var int
      */
     protected $_iMinTokens = null;
 
     /**
+     * Initial min-token value
      *
+     * @var int
      */
     protected $_iMinTokensInit = null;
 
     /**
      * Common init
      *
-     * @param PHPCPD_CloneMap $oMap
+     * @param  PHPCPD_CloneMap $oMap
+     * @param  int $minLines
+     * @param  int $minTokens
      *
      * @return PHPCPD_Detector_Strategy
      */
@@ -110,10 +122,9 @@ abstract class PHPCPD_Detector_Strategy
     /**
      * Copy & Paste Detection (CPD).
      *
-     * @param string          $file
-     * @param integer         $minLines
-     * @param integer         $minTokens
-     * @param PHPCPD_CloneMap $result
+     * @param string  $file
+     * @param integer $minLines
+     * @param integer $minTokens
      */
     abstract public function processFile($file, $minLines, $minTokens);
 }
