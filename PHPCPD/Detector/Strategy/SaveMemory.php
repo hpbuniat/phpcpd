@@ -46,75 +46,26 @@
  *
  * @author    Johann-Peter Hartmann <johann-peter.hartmann@mayflower.de>
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @author    Paul Guhl <paul.guhl@mayflower.de>
  * @copyright 2009-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version   Release: @package_version@
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release 1.4.0
  */
-class PHPCPD_Detector_Strategy_Default extends PHPCPD_Detector_Strategy
+class PHPCPD_Detector_Strategy_SaveMemory extends PHPCPD_Detector_Strategy
 {
-
     /**
      * Copy & Paste Detection (CPD).
      *
-     * @param  string $file
-     * @param  array $currentTokenPositions
-     * @param  string $currentSignature
-     *
-     * @return PHPCPD_Detector_Abstract
+     * @param  string          $file
+     * @param  integer         $minLines
+     * @param  integer         $minTokens
+     * @param  PHPCPD_CloneMap $result
+     * @author Johann-Peter Hartmann <johann-peter.hartmann@mayflower.de>
+     * @author Paul Guhl <paul.guhl@mayflower.de>
      */
-    public function processFile($file, $currentTokenPositions, $currentSignature) {
-        $count = count($currentTokenPositions);
-        $tokenNr = $firstLine = 0;
-        $found = FALSE;
-
-        if ($count > 0) {
-            do {
-                $line = $currentTokenPositions[$tokenNr];
-                $hash = md5(substr($currentSignature, $tokenNr * 5, $this->_iMinTokens * 5));
-                if (isset($this->_aHashes[$hash])) {
-                    $found = TRUE;
-
-                    if ($firstLine === 0) {
-                        $firstLine = $line;
-                        $firstHash = $hash;
-                        $firstToken = $tokenNr;
-                    }
-                }
-                else {
-                    if ($found) {
-                        $fileA = $this->_aHashes[$firstHash][0];
-                        $firstLineA = $this->_aHashes[$firstHash][1];
-
-                        if ($line + 1 - $firstLine > $this->_iMinLines && ($fileA != $file || $firstLineA != $firstLine)) {
-                            $this->_oMap->addClone(new PHPCPD_Clone($fileA, $firstLineA, $file, $firstLine, $line + 1 - $firstLine, $tokenNr + 1 - $firstToken));
-                        }
-
-                        $found = FALSE;
-                        $firstLine = 0;
-                    }
-
-                    $this->_aHashes[$hash] = array(
-                        $file,
-                        $line
-                    );
-                }
-
-                $tokenNr++;
-            }
-            while ($tokenNr <= $count - $this->_iMinTokens + 1);
-        }
-
-        if ($found) {
-            $fileA = $this->_aHashes[$firstHash][0];
-            $firstLineA = $this->_aHashes[$firstHash][1];
-
-            if ($line + 1 - $firstLine > $this->_iMinLines && ($fileA != $file || $firstLineA != $firstLine)) {
-                $this->_oMap->addClone(new PHPCPD_Clone($fileA, $firstLineA, $file, $firstLine, $line + 1 - $firstLine, $tokenNr + 1 - $firstToken));
-            }
-        }
-
-        return $this;
+    public function processFile($file, $minLines, $minTokens, PHPCPD_CloneMap $result)
+    {
     }
 }

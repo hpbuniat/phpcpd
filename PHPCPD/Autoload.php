@@ -57,6 +57,7 @@ function phpcpd_autoload($class) {
           'phpcpd_detector_strategy' => '/Detector/Strategy.php',
           'phpcpd_detector_tokenizer' => '/Detector/Tokenizer.php',
           'phpcpd_detector_strategy_default' => '/Detector/Strategy/Default.php',
+          'phpcpd_detector_strategy_savememory' => '/Detector/Strategy/SaveMemory.php',
           'phpcpd_detector_tokenizer_php' => '/Detector/Tokenizer/PHP.php',
           'phpcpd_detector_tokenizer_html' => '/Detector/Tokenizer/Html.php',
           'phpcpd_detector_tokenizer_abstracttokenizer' => '/Detector/Tokenizer/AbstractTokenizer.php',
