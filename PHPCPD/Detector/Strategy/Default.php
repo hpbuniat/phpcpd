@@ -55,14 +55,10 @@
 class PHPCPD_Detector_Strategy_Default extends PHPCPD_Detector_Strategy
 {
 
+
     /**
-     * Copy & Paste Detection (CPD).
-     *
-     * @param  string $file
-     * @param  array $currentTokenPositions
-     * @param  string $currentSignature
-     *
-     * @return PHPCPD_Detector_Abstract
+     * (non-PHPdoc)
+     * @see PHPCPD_Detector_Strategy::processFile($file, $currentTokenPositions, $currentSignature)
      */
     public function processFile($file, $currentTokenPositions, $currentSignature) {
         $count = count($currentTokenPositions);

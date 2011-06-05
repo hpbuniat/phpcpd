@@ -73,7 +73,7 @@ class PHPCPD_Detector_Tokenizer_PHP extends PHPCPD_Detector_Tokenizer_AbstractTo
      */
     public function cpd(PHPCPD_Detector_Strategy $strategy, $file) {
         $buffer = file_get_contents($file);
-        $this->_iLines = substr_count($buffer, PHP_EOL);
+        $this->_iLines = substr_count($buffer, "\n");
 
         $currentTokenPositions = array();
         $currentSignature = '';

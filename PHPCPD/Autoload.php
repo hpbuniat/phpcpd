@@ -77,8 +77,8 @@ function phpcpd_autoload($class) {
         require $path . $classes[$cn];
     }
     else {
-    	$sClass = str_replace('_', DIRECTORY_SEPARATOR, $class);
-    	require_once $sClass . '.php';
+        $sClass = str_replace('_', DIRECTORY_SEPARATOR, $class);
+        require_once $sClass . '.php';
     }
 }
 

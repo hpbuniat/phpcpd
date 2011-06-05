@@ -75,6 +75,13 @@ abstract class PHPCPD_Detector_Strategy
     protected $_iMinLines = null;
 
     /**
+     * Initial min-lines value
+     *
+     * @var int
+     */
+    protected $_iMinLinesInit = null;
+
+    /**
      * Minimum Tokens to detect Clone
      *
      * @var int
@@ -100,7 +107,8 @@ abstract class PHPCPD_Detector_Strategy
     public function init(PHPCPD_CloneMap $oMap, $minLines, $minTokens) {
         $this->_aHashes = array();
         $this->_oMap = $oMap;
-        $this->_iMinLines = $minLines;
+        $this->_iMinLines = (int) $minLines;
+        $this->_iMinLinesInit = $this->_iMinLines;
         $this->_iMinTokens = (int) $minTokens;
         $this->_iMinTokensInit = $this->_iMinTokens;
 
@@ -111,20 +119,25 @@ abstract class PHPCPD_Detector_Strategy
      * Set the tokenFactor
      *
      * @param  float $fFactor
+     * @param  int $iMinLines
      *
      * @return PHPCPD_Detector_Strategy
      */
-    public function tokenFactor($fFactor = 1.00) {
+    public function tokenFactor($fFactor = 1.00, $iMinLines = null) {
         $this->_iMinTokens = (int) ($this->_iMinTokensInit * $fFactor);
+        $this->_iMinLines = (is_null($iMinLines)) ? $this->_iMinLinesInit : $iMinLines;
+
         return $this;
     }
 
     /**
      * Copy & Paste Detection (CPD).
      *
-     * @param string  $file
-     * @param integer $minLines
-     * @param integer $minTokens
+     * @param  string $file
+     * @param  array $currentTokenPositions
+     * @param  string $currentSignature
+     *
+     * @return PHPCPD_Detector_Strategy
      */
-    abstract public function processFile($file, $minLines, $minTokens);
+    abstract public function processFile($file, $currentTokenPositions, $currentSignature);
 }

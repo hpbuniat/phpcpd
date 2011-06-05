@@ -62,6 +62,13 @@ class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTo
     protected $_fTokenFactor = 0.1;
 
     /**
+     * Minimum Lines
+     *
+     * @var int
+     */
+    protected $_iMinLines = 1;
+
+    /**
      * @var integer[] List of tokens to ignore
      */
     protected $tokensIgnoreList = array(
@@ -79,6 +86,8 @@ class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTo
      */
     public function __construct() {
         class_exists('PHP_CodeSniffer_Tokens');
+        $this->tokensIgnoreList[T_OPEN_CURLY_BRACKET] = TRUE;
+        $this->tokensIgnoreList[T_CLOSE_CURLY_BRACKET] = TRUE;
     }
 
     /**
@@ -87,29 +96,39 @@ class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTo
      */
     public function cpd(PHPCPD_Detector_Strategy $strategy, $file) {
         $buffer = file_get_contents($file);
-        $this->_iLines = substr_count($buffer, PHP_EOL);
-        $this->_aTokens = array();
-
-        $currentTokenPositions = array();
+        $this->_iLines = substr_count($buffer, "\n");
+        $aTokens = $currentTokenPositions = array();
         $currentSignature = '';
 
         $oTokenizer = new PHP_CodeSniffer_Tokenizers_CSS();
-        $this->_aTokens = $oTokenizer->tokenizeString($buffer);
+        $aTokens = $oTokenizer->tokenizeString($buffer);
 
         $tokenNr = 0;
         $line = 1;
 
-        unset($buffer);
-        foreach ($this->_aTokens as $token) {
-            if (! isset($this->tokensIgnoreList[$token['code']])) {
-                $currentTokenPositions[$tokenNr++] = $line;
-                $currentSignature .= chr($token['type'] & 255) . pack('N*', crc32($token['content']));
+        unset($buffer, $oTokenizer);
+        $bStyle = false;
+        foreach ($aTokens as $token) {
+            if ($token['code'] === T_OPEN_CURLY_BRACKET) {
+                $bStyle = true;
             }
-            
-            $line += substr_count($token['content'], PHP_EOL);
+            elseif ($token['code'] === T_CLOSE_CURLY_BRACKET) {
+                $bStyle = false;
+            }
+
+            // print_r($line . ': ' . print_r($token, true));
+            if (isset($this->tokensIgnoreList[$token['code']]) !== true) {
+                if ($bStyle === true) {
+                    $currentTokenPositions[$tokenNr++] = $line;
+                    $currentSignature .= chr($token['code'] & 255) . pack('N*', crc32($token['content']));
+                }
+            }
+
+            $line += substr_count($token['content'], "\n");
         }
 
-        $strategy->tokenFactor($this->_fTokenFactor)->processFile($file, $currentTokenPositions, $currentSignature);
+        unset($aTokens);
+        $strategy->tokenFactor($this->_fTokenFactor, $this->_iMinLines)->processFile($file, $currentTokenPositions, $currentSignature);
         return $this;
     }
 }

@@ -86,28 +86,25 @@ class PHPCPD_DetectorCssTest extends PHPUnit_Framework_TestCase
         );
 
         $clones = $clones->getClones();
-        $this->assertEquals(2, count($clones));
+        $this->assertEquals(5, count($clones));
 
         $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[0]->aFile);
-        $this->assertEquals(63, $clones[0]->aStartLine);
+        $this->assertEquals(31, $clones[0]->aStartLine);
         $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[0]->bFile);
-        $this->assertEquals(70, $clones[0]->bStartLine);
-        $this->assertEquals(6, $clones[0]->size);
-        $this->assertEquals(26, $clones[0]->tokens);
+        $this->assertEquals(64, $clones[0]->bStartLine);
+        $this->assertEquals(2, $clones[0]->size);
+        $this->assertEquals(2, $clones[0]->tokens);
 
-        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[1]->aFile);
-        $this->assertEquals(95, $clones[1]->aStartLine);
-        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testB.css', $clones[1]->bFile);
-        $this->assertEquals(9, $clones[1]->bStartLine);
-        $this->assertEquals(13, $clones[1]->size);
-        $this->assertEquals(53, $clones[1]->tokens);
+        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[4]->aFile);
+        $this->assertEquals(90, $clones[4]->aStartLine);
+        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testB.css', $clones[4]->bFile);
+        $this->assertEquals(4, $clones[4]->bStartLine);
+        $this->assertEquals(18, $clones[4]->size);
+        $this->assertEquals(51, $clones[4]->tokens);
 
-        $this->assertEquals('#navi_top .zweite_zeile {
-float: left;
-margin:0;
-padding:.3em .2em;
-white-space:nowrap;
+        $this->assertEquals('background: #fff url("/icons/ho/background_navi_top.gif") repeat-x 0 0;
 border-bottom: 1px solid #EBE9EA;
-', $clones[0]->getLines());
+border-top: 1px solid #f6f6f6;
+', $clones[3]->getLines());
     }
 }
