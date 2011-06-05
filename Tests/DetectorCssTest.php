@@ -48,7 +48,7 @@ if (!defined('TEST_FILES_PATH')) {
 }
 
 /**
- * Tests for the PHPCPD-Html code analyser.
+ * Tests for the PHPCPD-Css code analyser.
  *
  * @author    Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
