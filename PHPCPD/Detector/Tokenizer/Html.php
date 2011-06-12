@@ -60,7 +60,7 @@ class PHPCPD_Detector_Tokenizer_Html extends PHPCPD_Detector_Tokenizer_AbstractT
      * @var float
      */
     protected $_fTokenFactor = 0.1;
-    
+
     /**
      * @var integer[] List of tokens to ignore
      */

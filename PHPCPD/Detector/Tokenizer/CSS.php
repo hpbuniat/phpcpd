@@ -116,7 +116,6 @@ class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTo
                 $bStyle = false;
             }
 
-            // print_r($line . ': ' . print_r($token, true));
             if (isset($this->tokensIgnoreList[$token['code']]) !== true) {
                 if ($bStyle === true) {
                     $currentTokenPositions[$tokenNr++] = $line;

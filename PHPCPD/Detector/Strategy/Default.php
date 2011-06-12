@@ -52,9 +52,7 @@
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release 1.4.0
  */
-class PHPCPD_Detector_Strategy_Default extends PHPCPD_Detector_Strategy
-{
-
+class PHPCPD_Detector_Strategy_Default extends PHPCPD_Detector_Strategy {
 
     /**
      * (non-PHPdoc)
@@ -67,34 +65,36 @@ class PHPCPD_Detector_Strategy_Default extends PHPCPD_Detector_Strategy
 
         if ($count > 0) {
             do {
-                $line = $currentTokenPositions[$tokenNr];
-                $hash = md5(substr($currentSignature, $tokenNr * 5, $this->_iMinTokens * 5));
-                if (isset($this->_aHashes[$hash])) {
-                    $found = TRUE;
+                if (isset($currentTokenPositions[$tokenNr])) {
+                    $line = $currentTokenPositions[$tokenNr];
+                    $hash = md5(substr($currentSignature, $tokenNr * 5, $this->_iMinTokens * 5));
+                    if (isset($this->_aHashes[$hash])) {
+                        $found = TRUE;
 
-                    if ($firstLine === 0) {
-                        $firstLine = $line;
-                        $firstHash = $hash;
-                        $firstToken = $tokenNr;
+                        if ($firstLine === 0) {
+                            $firstLine = $line;
+                            $firstHash = $hash;
+                            $firstToken = $tokenNr;
+                        }
                     }
-                }
-                else {
-                    if ($found) {
-                        $fileA = $this->_aHashes[$firstHash][0];
-                        $firstLineA = $this->_aHashes[$firstHash][1];
+                    else {
+                        if ($found) {
+                            $fileA = $this->_aHashes[$firstHash][0];
+                            $firstLineA = $this->_aHashes[$firstHash][1];
 
-                        if ($line + 1 - $firstLine > $this->_iMinLines && ($fileA != $file || $firstLineA != $firstLine)) {
-                            $this->_oMap->addClone(new PHPCPD_Clone($fileA, $firstLineA, $file, $firstLine, $line + 1 - $firstLine, $tokenNr + 1 - $firstToken));
+                            if ($line + 1 - $firstLine > $this->_iMinLines && ($fileA != $file || $firstLineA != $firstLine)) {
+                                $this->addClone($fileA, $firstLineA, $file, $firstLine, $line + 1 - $firstLine, $tokenNr + 1 - $firstToken);
+                            }
+
+                            $found = FALSE;
+                            $firstLine = 0;
                         }
 
-                        $found = FALSE;
-                        $firstLine = 0;
+                        $this->_aHashes[$hash] = array(
+                            $file,
+                            $line
+                        );
                     }
-
-                    $this->_aHashes[$hash] = array(
-                        $file,
-                        $line
-                    );
                 }
 
                 $tokenNr++;
@@ -107,7 +107,7 @@ class PHPCPD_Detector_Strategy_Default extends PHPCPD_Detector_Strategy
             $firstLineA = $this->_aHashes[$firstHash][1];
 
             if ($line + 1 - $firstLine > $this->_iMinLines && ($fileA != $file || $firstLineA != $firstLine)) {
-                $this->_oMap->addClone(new PHPCPD_Clone($fileA, $firstLineA, $file, $firstLine, $line + 1 - $firstLine, $tokenNr + 1 - $firstToken));
+                $this->addClone($fileA, $firstLineA, $file, $firstLine, $line + 1 - $firstLine, $tokenNr + 1 - $firstToken);
             }
         }
 

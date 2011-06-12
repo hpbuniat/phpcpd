@@ -124,18 +124,27 @@ abstract class PHPCPD_Detector_Strategy
      * @return PHPCPD_Detector_Strategy
      */
     public function tokenFactor($fFactor = 1.00, $iMinLines = null) {
-        $this->_iMinTokens = (int) ($this->_iMinTokensInit * $fFactor);
+        $this->_iMinTokens = ceil($this->_iMinTokensInit * $fFactor);
         $this->_iMinLines = (is_null($iMinLines)) ? $this->_iMinLinesInit : $iMinLines;
 
         return $this;
     }
 
     /**
+     * (non-PHPdoc)
+     * @see PHPCPD_Clone::__construct($aFile, $aStartLine, $bFile, $bStartLine, $size, $tokens)
+     */
+    public function addClone($aFile, $aStartLine, $bFile, $bStartLine, $size, $tokens, $label = '') {
+        $this->_oMap->addClone(new PHPCPD_Clone($aFile, $aStartLine, $bFile, $bStartLine, $size, $tokens));
+        return $this;
+    }
+
+    /**
      * Copy & Paste Detection (CPD).
      *
-     * @param  string $file
-     * @param  array $currentTokenPositions
-     * @param  string $currentSignature
+     * @param  string $file Current file
+     * @param  array  $currentTokenPositions Token Positions
+     * @param  string $currentSignature Token Signature
      *
      * @return PHPCPD_Detector_Strategy
      */
