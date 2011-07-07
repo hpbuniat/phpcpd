@@ -98,7 +98,7 @@ class PHPCPD_Detector_Tokenizer_PHP extends PHPCPD_Detector_Tokenizer_AbstractTo
             }
         }
 
-        $strategy->tokenFactor($this->_fTokenFactor)->processFile($file, $currentTokenPositions, $currentSignature);
+        $strategy->tokenFactor($this->_fTokenFactor, $this->_iMinLines)->processFile($file, $currentTokenPositions, $currentSignature);
         return $this;
     }
 }

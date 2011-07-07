@@ -42,7 +42,7 @@
  */
 
 /**
- * PHPCPD code analyser for CSS
+ * PHPCPD code analyser for Javascript
  *
  * @author    Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
@@ -52,21 +52,7 @@
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release ...
  */
-class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTokenizer {
-
-    /**
-     * The Token-Factor
-     *
-     * @var float
-     */
-    protected $_fTokenFactor = 0.1;
-
-    /**
-     * Minimum Lines
-     *
-     * @var int
-     */
-    protected $_iMinLines = 1;
+class PHPCPD_Detector_Tokenizer_JS extends PHPCPD_Detector_Tokenizer_AbstractTokenizer {
 
     /**
      * @var integer[] List of tokens to ignore
@@ -75,9 +61,6 @@ class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTo
         T_INLINE_HTML => TRUE,
         T_COMMENT => TRUE,
         T_DOC_COMMENT => TRUE,
-        T_OPEN_TAG => TRUE,
-        T_OPEN_TAG_WITH_ECHO => TRUE,
-        T_CLOSE_TAG => TRUE,
         T_WHITESPACE => TRUE
     );
 
@@ -86,8 +69,9 @@ class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTo
      */
     public function __construct() {
         class_exists('PHP_CodeSniffer_Tokens');
-        $this->tokensIgnoreList[T_OPEN_CURLY_BRACKET] = TRUE;
-        $this->tokensIgnoreList[T_CLOSE_CURLY_BRACKET] = TRUE;
+        if (defined('PHP_CODESNIFFER_VERBOSITY') === false) {
+            define('PHP_CODESNIFFER_VERBOSITY', 0);
+        }
     }
 
     /**
@@ -96,34 +80,29 @@ class PHPCPD_Detector_Tokenizer_CSS extends PHPCPD_Detector_Tokenizer_AbstractTo
      */
     public function cpd(PHPCPD_Detector_Strategy $strategy, $file) {
         $buffer = file_get_contents($file);
+
+        // As the CodeSniffer-Tokenizer is replacing literal newlines, we're saving them
+        $buffer = str_replace('\\n', 'T_EOL_STRING', $buffer);
+
         $this->_iLines = substr_count($buffer, "\n");
         $aTokens = $currentTokenPositions = array();
         $currentSignature = '';
 
-        $oTokenizer = new PHP_CodeSniffer_Tokenizers_CSS();
+        $oTokenizer = new PHP_CodeSniffer_Tokenizers_JS();
         $aTokens = $oTokenizer->tokenizeString($buffer);
 
         $tokenNr = 0;
         $line = 1;
 
         unset($buffer, $oTokenizer);
-        $bStyle = false;
         foreach ($aTokens as $token) {
-            if ($token['code'] === T_OPEN_CURLY_BRACKET) {
-                $bStyle = true;
-            }
-            elseif ($token['code'] === T_CLOSE_CURLY_BRACKET) {
-                $bStyle = false;
-            }
-
             if (isset($this->tokensIgnoreList[$token['code']]) !== true) {
-                if ($bStyle === true) {
-                    $currentTokenPositions[$tokenNr++] = $line;
-                    $currentSignature .= chr($token['code'] & 255) . pack('N*', crc32($token['content']));
-                }
+                $currentTokenPositions[$tokenNr++] = $line;
+                $sContent = str_replace('T_EOL_STRING', '\n', $token['content']);
+                $currentSignature .= chr($token['code'] & 255) . pack('N*', crc32($sContent));
             }
 
-            $line += substr_count($token['content'], "\n");
+            $line += substr_count($token['content'], '\n');
         }
 
         unset($aTokens);

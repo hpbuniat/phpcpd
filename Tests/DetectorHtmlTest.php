@@ -9,17 +9,17 @@
  * modification, are permitted provided that the following conditions
  * are met:
  *
- *   * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
  *
- *   * Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in
- *     the documentation and/or other materials provided with the
- *     distribution.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in
+ * the documentation and/or other materials provided with the
+ * distribution.
  *
- *   * Neither the name of Sebastian Bergmann nor the names of his
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
+ * * Neither the name of Sebastian Bergmann nor the names of his
+ * contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -41,10 +41,7 @@
  */
 
 if (!defined('TEST_FILES_PATH')) {
-    define(
-      'TEST_FILES_PATH',
-      dirname(__FILE__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR
-    );
+    define('TEST_FILES_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR);
 }
 
 /**
@@ -58,15 +55,16 @@ if (!defined('TEST_FILES_PATH')) {
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release 1.0.0
  */
-class PHPCPD_DetectorHtmlTest extends PHPUnit_Framework_TestCase
-{
+class PHPCPD_DetectorHtmlTest extends PHPUnit_Framework_TestCase {
+
     /**
      * Provider for testDetectingSimpleClonesWorks
      */
-    public function strategyProvider()
-    {
+    public function strategyProvider() {
         return array(
-          array('PHPCPD_Detector_Strategy_Default')
+            array(
+                'PHPCPD_Detector_Strategy_Default'
+            )
         );
     }
 
@@ -75,15 +73,12 @@ class PHPCPD_DetectorHtmlTest extends PHPUnit_Framework_TestCase
      * @covers       PHPCPD_Clone::getLines
      * @dataProvider strategyProvider
      */
-    public function testDetectingSimpleClonesWorks($strategy)
-    {
-        $detector = new PHPCPD_Detector(new $strategy);
-        $clones = $detector->copyPasteDetection(
-          array(
-              TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testA.tpl',
-              TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testB.tpl'
-          )
-        );
+    public function testDetectingSimpleClonesWorks($strategy) {
+        $detector = new PHPCPD_Detector(new $strategy());
+        $clones = $detector->copyPasteDetection(array(
+            TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testA.tpl',
+            TEST_FILES_PATH . 'Html' . DIRECTORY_SEPARATOR . 'testB.tpl'
+        ));
 
         $clones = $clones->getClones();
 

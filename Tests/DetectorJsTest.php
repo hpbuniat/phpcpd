@@ -45,7 +45,7 @@ if (!defined('TEST_FILES_PATH')) {
 }
 
 /**
- * Tests for the PHPCPD-CSS code analyser.
+ * Tests for the PHPCPD-JS code analyser.
  *
  * @author    Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
@@ -55,7 +55,7 @@ if (!defined('TEST_FILES_PATH')) {
  * @link      http://github.com/sebastianbergmann/phpcpd/tree
  * @since     Class available since Release 1.0.0
  */
-class PHPCPD_DetectorCssTest extends PHPUnit_Framework_TestCase {
+class PHPCPD_DetectorJsTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Provider for testDetectingSimpleClonesWorks
@@ -76,30 +76,41 @@ class PHPCPD_DetectorCssTest extends PHPUnit_Framework_TestCase {
     public function testDetectingSimpleClonesWorks($strategy) {
         $detector = new PHPCPD_Detector(new $strategy());
         $clones = $detector->copyPasteDetection(array(
-            TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css',
-            TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testB.css'
+            TEST_FILES_PATH . 'JS' . DIRECTORY_SEPARATOR . 'testA.js',
+            TEST_FILES_PATH . 'JS' . DIRECTORY_SEPARATOR . 'testB.js'
         ));
 
         $clones = $clones->getClones();
-        $this->assertEquals(5, count($clones));
+        $this->assertEquals(3, count($clones));
 
-        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[0]->aFile);
-        $this->assertEquals(31, $clones[0]->aStartLine);
-        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[0]->bFile);
-        $this->assertEquals(64, $clones[0]->bStartLine);
-        $this->assertEquals(2, $clones[0]->size);
-        $this->assertEquals(2, $clones[0]->tokens);
+        $this->assertEquals(TEST_FILES_PATH . 'JS' . DIRECTORY_SEPARATOR . 'testA.js', $clones[0]->aFile);
+        $this->assertEquals(338, $clones[0]->aStartLine);
+        $this->assertEquals(TEST_FILES_PATH . 'JS' . DIRECTORY_SEPARATOR . 'testB.js', $clones[0]->bFile);
+        $this->assertEquals(22, $clones[0]->bStartLine);
+        $this->assertEquals(39, $clones[0]->size);
+        $this->assertEquals(176, $clones[0]->tokens);
 
-        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testA.css', $clones[4]->aFile);
-        $this->assertEquals(90, $clones[4]->aStartLine);
-        $this->assertEquals(TEST_FILES_PATH . 'CSS' . DIRECTORY_SEPARATOR . 'testB.css', $clones[4]->bFile);
-        $this->assertEquals(4, $clones[4]->bStartLine);
-        $this->assertEquals(18, $clones[4]->size);
-        $this->assertEquals(51, $clones[4]->tokens);
+        $this->assertEquals(TEST_FILES_PATH . 'JS' . DIRECTORY_SEPARATOR . 'testA.js', $clones[2]->aFile);
+        $this->assertEquals(818, $clones[2]->aStartLine);
+        $this->assertEquals(TEST_FILES_PATH . 'JS' . DIRECTORY_SEPARATOR . 'testB.js', $clones[2]->bFile);
+        $this->assertEquals(132, $clones[2]->bStartLine);
+        $this->assertEquals(14, $clones[2]->size);
+        $this->assertEquals(80, $clones[2]->tokens);
 
-        $this->assertEquals('background: #fff url("/icons/ho/background_navi_top.gif") repeat-x 0 0;
-border-bottom: 1px solid #EBE9EA;
-border-top: 1px solid #f6f6f6;
-', $clones[3]->getLines());
+        $this->assertEquals("    });
+
+    each(
+        ['find', 'children', 'parent', 'parents',
+         'next', 'nextAll', 'prev', 'prevAll',
+         'first', 'last', 'closest', 'siblings',
+         'parentsUntil', 'nextUntil', 'prevUntil'],
+        function(i, methodName) {
+
+            var pureMethod = jQueryMethods[methodName];
+
+            addCheck(methodName, 2, function(selector){
+
+                if ( !internal && lint.enabledReports.noElementsFound &&  !runFunction(pureMethod, arguments, true, this).length ) {
+", $clones[2]->getLines());
     }
 }

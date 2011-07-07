@@ -125,7 +125,7 @@ abstract class PHPCPD_Detector_Strategy
      */
     public function tokenFactor($fFactor = 1.00, $iMinLines = null) {
         $this->_iMinTokens = ceil($this->_iMinTokensInit * $fFactor);
-        $this->_iMinLines = (is_null($iMinLines)) ? $this->_iMinLinesInit : $iMinLines;
+        $this->_iMinLines = (empty($iMinLines) === true) ? $this->_iMinLinesInit : $iMinLines;
 
         return $this;
     }

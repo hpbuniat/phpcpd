@@ -115,7 +115,7 @@ class PHPCPD_Clone
      */
     public function getLines()
     {
-        if (empty($this->lines)) {
+        if (empty($this->lines) === true) {
             $this->lines = join(
               '',
               array_slice(file($this->aFile), $this->aStartLine - 1, $this->size)

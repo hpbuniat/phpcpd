@@ -69,6 +69,13 @@ abstract class PHPCPD_Detector_Tokenizer_AbstractTokenizer {
     protected $_iLines = 0;
 
     /**
+     * Minimum Lines
+     *
+     * @var int
+     */
+    protected $_iMinLines = null;
+
+    /**
      * Get the Number of Lines
      *
      * @return int

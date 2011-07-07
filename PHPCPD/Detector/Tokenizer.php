@@ -70,6 +70,7 @@ class PHPCPD_Detector_Tokenizer {
         'tpl' => 'Html',
         'phtml' => 'Html',
         'css' => 'CSS',
+        'js' => 'JS'
     );
 
     /**

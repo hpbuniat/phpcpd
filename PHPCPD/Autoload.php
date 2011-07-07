@@ -61,6 +61,7 @@ function phpcpd_autoload($class) {
           'phpcpd_detector_tokenizer_php' => '/Detector/Tokenizer/PHP.php',
           'phpcpd_detector_tokenizer_html' => '/Detector/Tokenizer/Html.php',
           'phpcpd_detector_tokenizer_css' => '/Detector/Tokenizer/CSS.php',
+          'phpcpd_detector_tokenizer_js' => '/Detector/Tokenizer/JS.php',
           'phpcpd_detector_tokenizer_abstracttokenizer' => '/Detector/Tokenizer/AbstractTokenizer.php',
           'phpcpd_log_xml' => '/Log/XML.php',
           'phpcpd_log_xml_pmd' => '/Log/XML/PMD.php',
@@ -78,7 +79,7 @@ function phpcpd_autoload($class) {
     }
     else {
         $sClass = str_replace('_', DIRECTORY_SEPARATOR, $class);
-        require_once $sClass . '.php';
+        @include_once $sClass . '.php';
     }
 }
 
